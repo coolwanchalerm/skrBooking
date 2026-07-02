@@ -3400,7 +3400,7 @@ function openRoomModal(id){
   modal.show();
 }
 
-function saveRoom(){
+async function saveRoom(){
   const id = document.getElementById('room_id').value;
   const name = document.getElementById('room_name').value.trim();
   const building = document.getElementById('room_building').value.trim();
@@ -3414,18 +3414,37 @@ function saveRoom(){
     return;
   }
 
-  const rooms = DB.getRooms();
-  if(id){
-    const idx = rooms.findIndex(r => r.id === parseInt(id));
-    rooms[idx] = { ...rooms[idx], name, building, floor, capacity, color, status };
-  } else {
-    rooms.push({ id: DB.nextId(rooms), name, building, floor, capacity, color, status });
-  }
-  DB.setRooms(rooms);
-
+  const roomData = { name, building, floor, capacity, color, status };
   bootstrap.Modal.getInstance(document.getElementById('roomModal')).hide();
-  Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลห้องประชุมสำเร็จ', timer: 1200, showConfirmButton: false })
-    .then(() => window._roomsRenderTable());
+  Swal.fire({ title: 'กำลังบันทึก...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+  try {
+    const rooms = DB.getRooms();
+    if(id){
+      // Update existing room
+      const numId = parseInt(id);
+      roomData.id = numId;
+      if(GAS_URL) {
+        await DB.fetchGAS('updateRoom', roomData);
+      }
+      const idx = rooms.findIndex(r => r.id === numId);
+      if(idx !== -1) rooms[idx] = { ...rooms[idx], ...roomData };
+    } else {
+      // Add new room
+      roomData.id = DB.nextId(rooms);
+      if(GAS_URL) {
+        const created = await DB.fetchGAS('addRoom', roomData);
+        if(created && created.id) roomData.id = created.id;
+      }
+      rooms.push(roomData);
+    }
+    DB.setRooms(rooms);
+
+    await Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลห้องประชุมสำเร็จ', timer: 1200, showConfirmButton: false });
+    window._roomsRenderTable && window._roomsRenderTable();
+  } catch(err) {
+    Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message });
+  }
 }
 
 function deleteRoom(id){
@@ -3440,10 +3459,18 @@ function deleteRoom(id){
     confirmButtonColor: '#c1493e'
   }).then(async result => {
     if(result.isConfirmed){
-      const rooms = DB.getRooms().filter(r => r.id !== id);
-      DB.setRooms(rooms);
-      Swal.fire({ icon: 'success', title: 'ลบห้องประชุมสำเร็จ', timer: 1200, showConfirmButton: false })
-        .then(() => window._roomsRenderTable());
+      Swal.fire({ title: 'กำลังลบข้อมูล...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      try {
+        if(GAS_URL) {
+          await DB.fetchGAS('deleteRoom', { id });
+        }
+        const rooms = DB.getRooms().filter(r => r.id !== id);
+        DB.setRooms(rooms);
+        await Swal.fire({ icon: 'success', title: 'ลบห้องประชุมสำเร็จ', timer: 1200, showConfirmButton: false });
+        window._roomsRenderTable && window._roomsRenderTable();
+      } catch(err) {
+        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาด', text: err.message });
+      }
     }
   });
 }
