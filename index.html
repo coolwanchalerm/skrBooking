@@ -2950,8 +2950,10 @@ function renderMyBookings(){
 
       let actions = `<button class="btn-action act-view" title="ดูรายละเอียด" onclick="viewBookingDetail(${b.id})"><i class="bi bi-eye"></i></button>`;
       
-      if(isTeacherOwnPending || isAdmin){
+      if (isTeacherOwnPending || (isAdmin && b.status !== 'approved')) {
         actions += `<button class="btn-action act-edit" title="แก้ไข" onclick="editBooking(${b.id})"><i class="bi bi-pencil"></i></button>`;
+      }
+      if (isTeacherOwnPending || isAdmin) {
         actions += `<button class="btn-action act-cancel" title="ลบการจอง" onclick="deleteBooking(${b.id})"><i class="bi bi-trash"></i></button>`;
       }
       return `
