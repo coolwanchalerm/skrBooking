@@ -2215,7 +2215,7 @@ function renderDashboardCharts(mine, all){
 
       const depts = {};
       all.filter(b => b.status !== 'cancelled').forEach(b => {
-        const d = b.department || 'อื่นๆ/บุคคลภายนอก';
+        const d = b.isExternal ? 'หน่วยงานภายนอก' : (b.department || 'ไม่ระบุกลุ่มสาระฯ');
         depts[d] = (depts[d] || 0) + 1;
       });
       const deptLabels = Object.keys(depts);
