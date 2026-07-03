@@ -2946,11 +2946,12 @@ function renderMyBookings(){
       const rColor = bRoom ? (bRoom.color || 'var(--gold)') : 'var(--gold)';
       const isPending = b.status === 'pending';
       const isTeacherOwnPending = currentUser.role === 'teacher' && b.userId === currentUser.id && isPending;
+      const isAdminPending = currentUser.role === 'admin' && isPending;
       const isAdmin = currentUser.role === 'admin';
 
       let actions = `<button class="btn-action act-view" title="ดูรายละเอียด" onclick="viewBookingDetail(${b.id})"><i class="bi bi-eye"></i></button>`;
       
-      if (isTeacherOwnPending || (isAdmin && b.status !== 'approved')) {
+      if (isTeacherOwnPending || isAdminPending) {
         actions += `<button class="btn-action act-edit" title="แก้ไข" onclick="editBooking(${b.id})"><i class="bi bi-pencil"></i></button>`;
       }
       if (isTeacherOwnPending || isAdmin) {
