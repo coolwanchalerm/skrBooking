@@ -2414,6 +2414,8 @@ function renderBookingPage(){
         nameField.readOnly = true;
         nameField.classList.add('bg-light');
         nameField.value = '';
+        phoneField.readOnly = true;
+        phoneField.classList.add('bg-light');
         phoneField.value = '';
         updatePhoneValidationUI(phoneField);
         nameField.placeholder = 'จะแสดงชื่ออัตโนมัติเมื่อเลือกครู/บุคลากร';
@@ -2425,6 +2427,8 @@ function renderBookingPage(){
         nameField.readOnly = false;
         nameField.classList.remove('bg-light');
         nameField.value = '';
+        phoneField.readOnly = false;
+        phoneField.classList.remove('bg-light');
         phoneField.value = '';
         updatePhoneValidationUI(phoneField);
         nameField.placeholder = 'พิมพ์ชื่อ-สกุล บุคคลภายนอก';
@@ -2436,6 +2440,8 @@ function renderBookingPage(){
         nameField.readOnly = true;
         nameField.classList.add('bg-light');
         nameField.value = '';
+        phoneField.readOnly = true;
+        phoneField.classList.add('bg-light');
         nameField.placeholder = 'กรุณาเลือกประเภทผู้จองก่อน';
         nameHint.textContent = 'กรุณาเลือกประเภทผู้จองด้านบนก่อน';
         renderDepartmentField(false, '');
@@ -3142,6 +3148,10 @@ function editBooking(id){
       document.getElementById('bk_name').value = b.bookerName;
       document.getElementById('bk_name').readOnly = b.isExternal ? false : true;
       document.getElementById('bk_name').classList.toggle('bg-light', !b.isExternal);
+      
+      const pf = document.getElementById('bk_phone');
+      pf.readOnly = b.isExternal ? false : true;
+      pf.classList.toggle('bg-light', !b.isExternal);
     } else {
       // ผู้ใช้ทั่วไป: ชื่อและฝ่ายล็อก แต่วันที่/เวลา/ห้อง/หัวข้อ/อุปกรณ์แก้ไขได้
       document.getElementById('bk_name').value = b.bookerName;
