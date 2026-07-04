@@ -1219,6 +1219,35 @@ body{
   </div>
 </template>
 
+<!-- Users Management (Admin) Template -->
+<template id="tpl-users">
+  <div class="page-fade">
+    <div class="panel">
+      <div class="panel-head flex-wrap gap-2">
+        <h6><i class="bi bi-people-fill"></i> จัดการสมาชิก</h6>
+        <button class="btn btn-sm btn-primary-soft" id="btnAddUser"><i class="bi bi-person-plus-fill"></i> เพิ่มสมาชิก</button>
+      </div>
+      <div class="panel-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" id="usersTable">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th>เบอร์โทร</th>
+                <th>กลุ่มสาระ / ฝ่ายงาน</th>
+                <th>ระดับสิทธิ์</th>
+                <th class="text-end">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <!-- Rooms Management (Admin) Template -->
 <template id="tpl-rooms">
   <div class="page-fade">
@@ -1292,6 +1321,63 @@ body{
     </div>
   </div>
 </template>
+
+<!-- User Modal (Admin) -->
+<div class="modal fade" id="userModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="userForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="userModalTitle">เพิ่มสมาชิก</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="u_id">
+          <div class="mb-3">
+            <label class="form-label">ชื่อผู้ใช้งาน (Username) <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="u_username" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="u_fullname" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">เบอร์โทรศัพท์ <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="u_phone" required pattern="^0[0-9]{9}$" title="เบอร์โทรศัพท์ต้องขึ้นต้นด้วย 0 และมี 10 หลัก" maxlength="10">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">กลุ่มสาระ / ฝ่ายงาน <span class="text-danger">*</span></label>
+            <select class="form-select" id="u_department" required>
+              <option value="">-- เลือกกลุ่มสาระฯ / ฝ่ายงาน --</option>
+              <option value="ฝ่ายบริหาร">ฝ่ายบริหาร</option>
+              <option value="กลุ่มสาระการเรียนรู้คณิตศาสตร์">กลุ่มสาระการเรียนรู้คณิตศาสตร์</option>
+              <option value="กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี">กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</option>
+              <option value="กลุ่มสาระการเรียนรู้ภาษาไทย">กลุ่มสาระการเรียนรู้ภาษาไทย</option>
+              <option value="กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ">กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</option>
+              <option value="กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม">กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม</option>
+              <option value="กลุ่มสาระการเรียนรู้สุขศึกษา พลศึกษา">กลุ่มสาระการเรียนรู้สุขศึกษา พลศึกษา</option>
+              <option value="กลุ่มสาระการเรียนรู้ศิลปศึกษา">กลุ่มสาระการเรียนรู้ศิลปศึกษา</option>
+              <option value="กลุ่มสาระการเรียนรู้การงานอาชีพ">กลุ่มสาระการเรียนรู้การงานอาชีพ</option>
+              <option value="กลุ่มสาระการเรียนรู้เทคโนโลยีสารสนเทศและการสื่อสาร">กลุ่มสาระการเรียนรู้เทคโนโลยีสารสนเทศและการสื่อสาร</option>
+              <option value="งานแนะแนว">งานแนะแนว</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">ระดับสิทธิ์ <span class="text-danger">*</span></label>
+            <select class="form-select" id="u_role" required>
+              <option value="teacher">ครู / บุคลากร</option>
+              <option value="admin">แอดมิน (Admin)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary" id="btnSaveUser">บันทึกข้อมูล</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- Booking Detail Modal -->
 <div class="modal fade" id="detailModal" tabindex="-1">
@@ -1437,8 +1523,19 @@ function genDefaultBookings(){
 const DB = {
   async fetchGAS(action, payload = null) {
     if (!GAS_URL) return null;
-    const opts = { method: "POST", body: JSON.stringify(payload) };
-    // fetch will default to text/plain for stringified body, which avoids CORS preflight
+    
+    // เปลี่ยนมาใช้ x-www-form-urlencoded เพื่อแก้ปัญหา postData หายในบางเบราว์เซอร์
+    const bodyParams = new URLSearchParams();
+    if (payload !== null) {
+      bodyParams.append("payload", JSON.stringify(payload));
+    }
+    
+    const opts = { 
+      method: "POST", 
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: bodyParams.toString() 
+    };
+    
     const res = await fetch(`${GAS_URL}?action=${action}`, opts);
     const json = await res.json();
     if (json.status === "success") return json.data;
@@ -1485,7 +1582,21 @@ const DB = {
     return rooms.map(r => ({ ...r, status: r.status || "available", building: r.building || '', floor: r.floor || '' }));
   },
   setRooms(rooms){ localStorage.setItem(DB_KEYS.ROOMS, JSON.stringify(rooms)); },
-  getBookings(){ return JSON.parse(localStorage.getItem(DB_KEYS.BOOKINGS) || "[]"); },
+  getBookings(){ 
+    const bookings = JSON.parse(localStorage.getItem(DB_KEYS.BOOKINGS) || "[]");
+    const users = this.getUsers();
+    return bookings.map(b => {
+      if (!b.isExternal && b.userId) {
+        const u = users.find(user => String(user.id) === String(b.userId));
+        if (u) {
+          b.department = u.department;
+          b.bookerName = u.fullname || u.username;
+          b.phone = u.phone;
+        }
+      }
+      return b;
+    });
+  },
   setBookings(bookings){ localStorage.setItem(DB_KEYS.BOOKINGS, JSON.stringify(bookings)); },
 
   getSession(){ 
@@ -1812,6 +1923,7 @@ function setupSidebar(){
     items.push({ id: 'approval', icon: 'bi-clipboard-check-fill', label: 'ตรวจสอบ/อนุมัติการจอง', badgeKey: 'pending' });
     items.push({ id: 'mybookings', icon: 'bi-card-checklist', label: 'รายการจองทั้งหมด' });
     items.push({ id: 'rooms', icon: 'bi-door-closed-fill', label: 'จัดการห้องประชุม' });
+    items.push({ id: 'users', icon: 'bi-people-fill', label: 'จัดการสมาชิก' });
     items.push({ id: 'reports', icon: 'bi-file-earmark-bar-graph-fill', label: 'รายงาน / Export' });
   }
 
@@ -1873,6 +1985,7 @@ const PAGE_TITLES = {
   mybookings: 'รายการจองของฉัน',
   approval: 'ตรวจสอบและอนุมัติการจอง',
   rooms: 'จัดการห้องประชุม',
+  users: 'จัดการสมาชิก',
   reports: 'รายงานและส่งออกข้อมูล'
 };
 
@@ -1913,6 +2026,7 @@ function navigateTo(page){
     case 'mybookings': renderMyBookings(); break;
     case 'approval': renderApproval(); break;
     case 'rooms': renderRooms(); break;
+    case 'users': renderUsers(); break;
     case 'reports': renderReports(); break;
   }
 }
@@ -3461,6 +3575,184 @@ function rejectBooking(id){
 /* =========================================================
    ROOMS MANAGEMENT (ADMIN)
    ========================================================= */
+function renderUsers(){
+  const renderTable = () => {
+    const users = DB.getUsers();
+    const tbody = document.querySelector('#usersTable tbody');
+    if(users.length === 0){
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">ไม่มีข้อมูลสมาชิก</td></tr>`;
+      return;
+    }
+    
+    // อัปเดต Dropdown แผนก
+    const depts = [...new Set(users.map(u => u.department).filter(Boolean))];
+    const deptSelect = document.getElementById('u_department');
+    if (deptSelect) {
+      depts.forEach(d => {
+        const optionExists = Array.from(deptSelect.options).some(opt => opt.value === d);
+        if(!optionExists) {
+           deptSelect.innerHTML += `<option value="${d}">${d}</option>`;
+        }
+      });
+    }
+
+    tbody.innerHTML = users.map((u, i) => `
+      <tr>
+        <td><strong>${u.username}</strong></td>
+        <td>${u.fullname || "-"}</td>
+        <td>${u.phone || "-"}</td>
+        <td>${u.department || "-"}</td>
+        <td>
+          <span class="badge ${u.role === 'admin' ? 'bg-primary' : 'bg-secondary'}">
+            ${u.role === 'admin' ? 'แอดมิน' : 'ครู / บุคลากร'}
+          </span>
+        </td>
+        <td class="text-end">
+          <button class="btn-action act-edit" title="แก้ไข" onclick="openUserModal('${u.id}')"><i class="bi bi-pencil"></i></button>
+          <button class="btn-action act-cancel" title="ลบ" onclick="deleteUser('${u.id}')"><i class="bi bi-trash"></i></button>
+        </td>
+      </tr>
+    `).join('');
+  };
+
+  renderTable();
+  window._usersRenderTable = renderTable;
+
+  document.getElementById('btnAddUser').addEventListener('click', () => openUserModal(null));
+  document.getElementById('userForm').addEventListener('submit', saveUser);
+}
+
+function openUserModal(id){
+  let modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+  if (!modal) {
+    modal = new bootstrap.Modal(document.getElementById('userModal'));
+  }
+  const form = document.getElementById('userForm');
+  form.reset();
+  document.getElementById('u_id').value = '';
+  document.getElementById('userModalTitle').textContent = 'เพิ่มสมาชิก';
+  document.getElementById('u_username').disabled = false;
+
+  if(id){
+    document.getElementById('userModalTitle').textContent = 'แก้ไขสมาชิก';
+    // แอดมินสามารถแก้ไข username ได้ จึงไม่ต้อง disabled
+    const user = DB.getUsers().find(u => String(u.id) === String(id));
+    if(user){
+      document.getElementById('u_id').value = user.id;
+      document.getElementById('u_username').value = user.username || '';
+      document.getElementById('u_fullname').value = user.fullname || '';
+      document.getElementById('u_phone').value = user.phone || '';
+      document.getElementById('u_role').value = user.role || 'teacher';
+      
+      const deptSelect = document.getElementById('u_department');
+      if (user.department) {
+        const optionExists = Array.from(deptSelect.options).some(opt => opt.value === user.department);
+        if(!optionExists) {
+           deptSelect.innerHTML += `<option value="${user.department}">${user.department}</option>`;
+        }
+        deptSelect.value = user.department;
+      }
+    }
+  }
+  modal.show();
+}
+
+async function saveUser(e){
+  e.preventDefault();
+  const id = document.getElementById('u_id').value;
+  const username = document.getElementById('u_username').value.trim();
+  const fullname = document.getElementById('u_fullname').value.trim();
+  const phone = document.getElementById('u_phone').value.trim();
+  const department = document.getElementById('u_department').value;
+  const role = document.getElementById('u_role').value;
+
+  const users = DB.getUsers();
+  
+  // ตรวจสอบ username ซ้ำ
+  const isDuplicate = users.some(u => String(u.username).toLowerCase() === username.toLowerCase() && String(u.id) !== String(id));
+  if(isDuplicate){
+    if (document.activeElement) document.activeElement.blur();
+    Swal.fire({
+      title: 'ไม่สามารถบันทึกได้', 
+      text: 'ชื่อผู้ใช้งาน (Username) นี้มีในระบบแล้ว กรุณาใช้ชื่ออื่น', 
+      icon: 'warning',
+      target: document.getElementById('userModal')
+    });
+    return;
+  }
+
+  const btn = document.getElementById('btnSaveUser');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> กำลังบันทึก...';
+
+  try {
+    const userData = { username, fullname, phone, department, role };
+    if(id){
+      userData.id = id;
+      if(GAS_URL) {
+        await DB.fetchGAS('updateUser', userData);
+      }
+      const users = DB.getUsers();
+      const idx = users.findIndex(u => String(u.id) === String(id));
+      if(idx > -1) {
+        users[idx] = { ...users[idx], ...userData };
+        localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+      }
+    } else {
+      if(GAS_URL) {
+        const created = await DB.fetchGAS('addUser', userData);
+        userData.id = created.id;
+      } else {
+        userData.id = Date.now().toString();
+      }
+      const users = DB.getUsers();
+      users.push(userData);
+      localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+    }
+    
+    const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+    if (modal) modal.hide();
+    
+    // รีเซ็ต focus เพื่อแก้บั๊ก aria-hidden ของ Bootstrap
+    document.body.focus();
+    
+    Swal.fire({icon: 'success', title: 'บันทึกสำเร็จ', timer: 1500, showConfirmButton: false});
+    if(window._usersRenderTable) window._usersRenderTable();
+  } catch(err) {
+    Swal.fire('ข้อผิดพลาด', err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'บันทึกข้อมูล';
+  }
+}
+
+async function deleteUser(id){
+  const res = await Swal.fire({
+    title: 'ยืนยันการลบสมาชิก?',
+    text: "ลบแล้วไม่สามารถกู้คืนได้ (ยกเว้นแก้ไขใน Google Sheet โดยตรง)",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'ลบข้อมูล',
+    cancelButtonText: 'ยกเลิก',
+    confirmButtonColor: '#dc3545'
+  });
+  if(res.isConfirmed){
+    try {
+      if(GAS_URL) {
+        await DB.fetchGAS('deleteUser', { id });
+      }
+      let users = DB.getUsers();
+      users = users.filter(u => String(u.id) !== String(id));
+      localStorage.setItem(DB_KEYS.USERS, JSON.stringify(users));
+      
+      Swal.fire({icon: 'success', title: 'ลบสำเร็จ', timer:1500, showConfirmButton:false});
+      if(window._usersRenderTable) window._usersRenderTable();
+    } catch(err) {
+      Swal.fire('ข้อผิดพลาด', err.message, 'error');
+    }
+  }
+}
+
 function renderRooms(){
   const renderTable = () => {
     const rooms = DB.getRooms();
