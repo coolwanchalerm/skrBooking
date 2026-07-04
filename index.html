@@ -1612,6 +1612,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   bindLogin();
   bindGlobalSidebarDismiss();
+  bindGlobalErrorHandlers();
+  initAutoLogout();
 });
 
 function showLogin(){
@@ -1640,6 +1642,56 @@ function bindGlobalSidebarDismiss() {
       }
     }
   });
+}
+
+function bindGlobalErrorHandlers() {
+  // ดักจับ Error ที่หลุดรอดจาก try-catch เพื่อป้องกันหน้าจอค้าง (Invisible Backdrop)
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error("Unhandled Rejection:", e.reason);
+    if (Swal.isVisible() && Swal.isLoading()) {
+      Swal.close();
+      Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาดของระบบ', text: 'ระบบทำงานผิดพลาดและได้เคลียร์หน้าจอแล้ว กรุณาลองใหม่อีกครั้ง' });
+    }
+  });
+  window.addEventListener('error', (e) => {
+    console.error("Global Error:", e.error);
+    if (Swal.isVisible() && Swal.isLoading()) {
+      Swal.close();
+      Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาดของระบบ', text: 'ระบบทำงานผิดพลาดและได้เคลียร์หน้าจอแล้ว กรุณาลองใหม่อีกครั้ง' });
+    }
+  });
+}
+
+/* ===================== AUTO LOGOUT ===================== */
+let idleTimer;
+const IDLE_TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
+
+function resetIdleTimer() {
+  if (idleTimer) clearTimeout(idleTimer);
+  if (!currentUser) return; // Only track idle time if logged in
+  idleTimer = setTimeout(() => {
+    // Session expired due to inactivity
+    Swal.fire({
+      icon: 'warning',
+      title: 'หมดเวลาเซสชัน',
+      text: 'ระบบได้นำคุณออกอัตโนมัติเนื่องจากไม่มีการใช้งานเกิน 10 นาที',
+      confirmButtonText: 'ตกลง',
+      allowOutsideClick: false
+    }).then(() => {
+      DB.clearSession();
+      currentUser = null;
+      if (idleTimer) clearTimeout(idleTimer);
+      showLogin();
+    });
+  }, IDLE_TIMEOUT_MS);
+}
+
+function initAutoLogout() {
+  // รีเซ็ตตัวจับเวลาเมื่อมีการขยับเมาส์ พิมพ์ข้อความ แตะหน้าจอ หรือเลื่อนจอ
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, resetIdleTimer, { passive: true });
+  });
+  resetIdleTimer();
 }
 
 /* ===================== LOGIN / LOGOUT ===================== */
@@ -1727,6 +1779,7 @@ function logout(){
       }).then(() => {
         DB.clearSession();
         currentUser = null;
+        if (idleTimer) clearTimeout(idleTimer);
         showLogin();
       });
     }
